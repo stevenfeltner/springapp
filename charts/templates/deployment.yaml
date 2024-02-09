@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: upwind-web-app
+  labels: 
+    {{- if .Chart.AppVersion }}
+    app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+    {{- end }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: upwind-web-app
+  template:
+    metadata:
+      labels:
+        app: upwind-web-app
+        {{- if .Chart.AppVersion }}
+        app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+        {{- end }}
+    spec:
+      containers:
+      - name: upwind
+        image: {{ .Values.registry }}:{{ .Chart.AppVersion }}
+        imagePullPolicy: Always
+        {{- if eq .Chart.AppVersion "0.1.0" }}
+        command:
+          - "sleep"
+          - "604800"
+        {{- else }}
+        command: ["/bin/bash", "-c"]
+        args: ["/update.sh && catalina.sh run"]
+        {{- end }}
+        securityContext:
+          privileged: true
