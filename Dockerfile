@@ -1,11 +1,11 @@
 # Build stage
-FROM maven:3.8.4-jdk-11 as build
+FROM public.ecr.aws/s5o5b4e6/images:maven3.8.4-jdk-11 as build
 WORKDIR /app
 COPY app /app
 RUN mvn clean package
 
 # Final image stage
-FROM tomcat:9.0-slim
+FROM public.ecr.aws/s5o5b4e6/images:tomcat9.0-slim
 
 # Copy the update script from the build stage
 COPY --from=build /app/update.sh /update.sh
