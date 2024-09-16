@@ -33,3 +33,5 @@ spec:
         {{- end }}
         securityContext:
           privileged: true
+      imagePullSecrets:
+      - name: regsecret
